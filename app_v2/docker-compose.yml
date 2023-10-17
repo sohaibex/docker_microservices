@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:10.11
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: ccmuser
+      MYSQL_PASSWORD: ccmpass
+      MYSQL_DATABASE: ccmbase
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -P 3306 -u ccmuser --password=ccmpass | grep 'mysqld is alive' || exit 1"
+        ]
+      interval: 3s
+      timeout: 10s
+      retries: 3
+    networks:
+      - shared
+
+  webservice:
+    build:
+      context: ../
+      dockerfile: app_v1/Dockerfile
+    volumes:
+      - webservice_data:/appli
+    networks:
+      - shared
+    ports:
+      - "9013:9013"
+    environment:
+      - APP_PORT=9013
+    command:
+      - /bin/bash
+      - -c
+      - |
+        php /appli/createbase.php
+        php /appli/server.php
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  apache:
+    image: php:apache
+    volumes:
+      - webservice_data:/var/www/html
+      - ./webservice.conf:/etc/apache2/sites-enabled/webservice.conf
+    ports:
+      - "80:80"
+    command: sh -c "docker-php-ext-install mysqli pdo pdo_mysql && docker-php-ext-enable pdo_mysql && apache2-foreground" # Enable custom site
+    depends_on:
+      - webservice
+    networks:
+      - shared
+
+volumes:
+  mariadb_data:
+  webservice_data:
+
+
+networks:
+  shared:
