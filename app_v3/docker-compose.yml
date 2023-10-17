@@ -24,15 +24,15 @@ services:
       - shared
 
   webservice:
-    image: localhost:5000/app_v1_webservice:latest
+    image: localhost:5000/webservice:latest
     volumes:
       - webservice_data:/appli
     networks:
       - shared
     ports:
-      - "9014:9014"
+      - "9015:9015"
     environment:
-      - APP_PORT=9014
+      - APP_PORT=9015
     command:
       - /bin/bash
       - -c
@@ -43,30 +43,35 @@ services:
       mariadb:
         condition: service_healthy
 
-  apache:
-    image: php:apache
+  php-fpm:
+    container_name: php-fpm
+    image: php:fpm
+    command: sh -c "docker-php-ext-install mysqli pdo pdo_mysql && docker-php-ext-enable pdo_mysql && php-fpm"
+    volumes:
+      - webservice_data:/var/www/html/
+    networks:
+      - shared
+    ports:
+      - "9000:9000"
+    expose:
+      - 9000
+
+  nginx:
+    image: nginx:latest
     volumes:
       - webservice_data:/var/www/html
-      - ./webservice.conf:/etc/apache2/sites-enabled/webservice.conf
+      - ./nginx.conf:/etc/nginx/nginx.conf
+
     ports:
-      - "81:80"
-    command: sh -c "docker-php-ext-install mysqli pdo pdo_mysql && docker-php-ext-enable pdo_mysql && apache2-foreground" # Enable custom site
+      - "82:80"
     depends_on:
       - webservice
     networks:
       - shared
 
-  registry:
-    image: registry:2
-    ports:
-      - "5000:5000"
-    volumes:
-      - registry_data:/var/lib/registry
-
 volumes:
   mariadb_data:
   webservice_data:
-  registry_data:
 
 
 networks:

@@ -13,18 +13,18 @@ $address = '0.0.0.0';
 $port = getenv('APP_PORT') ?: 9013;
 
 if (($sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) === false) {
-    echo "socket_create() a échoué : raison : " . socket_strerror(socket_last_error()) . "\n";
-	exit(1);
+  echo "socket_create() a échoué : raison : " . socket_strerror(socket_last_error()) . "\n";
+  exit(1);
 }
 
 if (socket_bind($sock, $address, $port) === false) {
-    echo "socket_bind() a échoué : raison : " . socket_strerror(socket_last_error($sock)) . "\n";
-	exit(1);
+  echo "socket_bind() a échoué : raison : " . socket_strerror(socket_last_error($sock)) . "\n";
+  exit(1);
 }
 
 if (socket_listen($sock, 5) === false) {
-    echo "socket_listen() a échoué : raison : " . socket_strerror(socket_last_error($sock)) . "\n";
-	exit(1);
+  echo "socket_listen() a échoué : raison : " . socket_strerror(socket_last_error($sock)) . "\n";
+  exit(1);
 }
 
 
@@ -34,27 +34,32 @@ include("conf.php");
 $mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname); // on instancie la classe mysqli
 
 if ($mysqli->connect_errno) { // appel de méthode avec l'opérateur ->
-	printf("ERROR\n"); 
-	exit(1);
+  printf("ERROR\n");
+  exit(1);
 }
 
 do {
   if (($msgsock = socket_accept($sock)) === false) {
-      echo "socket_accept() a échoué : raison : " . socket_strerror(socket_last_error($sock)) . "\n";
-      break;
+    echo "socket_accept() a échoué : raison : " . socket_strerror(socket_last_error($sock)) . "\n";
+    break;
   }
-  socket_getpeername($msgsock,$client);
-  $madate=date("Y-m-d H:i:s");
+  socket_getpeername($msgsock, $client);
+  $madate = date("Y-m-d H:i:s");
   echo "$madate-$client\n";
 
   $requete = "SELECT * FROM membres";
-  $resultat = $mysqli -> query($requete);
-  $msg="HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n";
-  while ($ligne = $resultat -> fetch_assoc()) {
-    $msg.=$ligne['ccmpseudo']. ';'.$ligne['mdp'].';'.$ligne['ccmmail']."\n";
+  $resultat = $mysqli->query($requete);
+  $msg = "";
+  while ($ligne = $resultat->fetch_assoc()) {
+    $msg .= $ligne['ccmpseudo'] . ';' . $ligne['mdp'] . ';' . $ligne['ccmmail'] . "\r\n\r\n";
   }
 
-  socket_write($msgsock, $msg, strlen($msg));
+  $contentLength = strlen($msg);
+  $response = "HTTP/1.1 200 OK\r\n";
+  $response .= "Content-Type: text/plain\r\n";
+  $response .= "Content-Length: $contentLength\r\n\r\n";
+  $response .= $msg;
+  socket_write($msgsock, $response, strlen($response));
   socket_close($msgsock);
 } while (true);
 $mysqli->close();
