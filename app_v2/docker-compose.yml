@@ -24,7 +24,7 @@ services:
       - shared
 
   webservice:
-    image: localhost:5000/app_v1_webservice:latest
+    image: localhost:5000/webservice:latest
     volumes:
       - webservice_data:/appli
     networks:
@@ -50,23 +50,17 @@ services:
       - ./webservice.conf:/etc/apache2/sites-enabled/webservice.conf
     ports:
       - "81:80"
-    command: sh -c "docker-php-ext-install mysqli pdo pdo_mysql && docker-php-ext-enable pdo_mysql && apache2-foreground" # Enable custom site
+    command: sh -c "docker-php-ext-install mysqli pdo pdo_mysql && docker-php-ext-enable pdo_mysql && apache2-foreground"
     depends_on:
       - webservice
     networks:
       - shared
-
-  registry:
-    image: registry:2
-    ports:
-      - "5000:5000"
-    volumes:
-      - registry_data:/var/lib/registry
+    environment:
+      - WEBSERVICE_PORT=9014
 
 volumes:
   mariadb_data:
   webservice_data:
-  registry_data:
 
 
 networks:

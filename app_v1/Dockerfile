@@ -13,4 +13,4 @@ WORKDIR /appli
 
 COPY appliccm/* /appli/
 
-EXPOSE 9014
+EXPOSE 9013

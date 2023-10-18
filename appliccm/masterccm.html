@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Portail Enseignant</title>
+</head>
+
+<body class="bg-gray-100 py-10">
+
+    <!-- Header -->
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold">Sohaib EL MEDIOUNI</h1>
+        <p>Voici les trois exercices et leurs applications correspondantes.</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-4 gap-8">
+
+            <!-- App V1 - Exercice 1 -->
+            <div class="bg-white p-6 rounded shadow-md">
+                <h2 class="text-xl mb-4">App V1 - Exercice 1</h2>
+                <p class="mb-4">Application avec Apache/PHP, MariaDB et un conteneur personnel.</p>
+                <a href="http://10.3.134.136/" target="_blank"
+                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Ouvrir App V1</a>
+            </div>
+
+            <!-- App V2 - Exercice 2 -->
+            <div class="bg-white p-6 rounded shadow-md">
+                <h2 class="text-xl mb-4">App V2 - Exercice 2</h2>
+                <p class="mb-4">Application avec un registry et déploiement du conteneur webservice.</p>
+                <a href="http://10.3.134.136:81" target="_blank"
+                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Ouvrir App V2</a>
+            </div>
+
+            <!-- App V3 - Exercice 3 -->
+            <div class="bg-white p-6 rounded shadow-md">
+                <h2 class="text-xl mb-4">App V3 - Exercice 3</h2>
+                <p class="mb-4">Variante avec un conteneur PHP-FPM pour exécuter les pages PHP et nginx.</p>
+                <a href="http://10.3.134.136:82" target="_blank"
+                    class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Ouvrir App V3</a>
+            </div>
+
+            <!-- Docker Registry -->
+            <div class="bg-white p-6 rounded shadow-md">
+                <h2 class="text-xl mb-4">Docker Registry</h2>
+                <p class="mb-4">Visualisez le contenu du registry à l'adresse suivante.</p>
+                <a href="http://10.3.134.136:5000/v2/_catalog" target="_blank"
+                    class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">Ouvrir le Registry</a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-12">
+        <p class="text-gray-600">© 2023 Sohaib EL MEDIOUNI. Tous droits réservés.</p>
+    </div>
+
+</body>
+
+</html>
